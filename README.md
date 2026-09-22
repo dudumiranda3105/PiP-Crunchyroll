@@ -2,78 +2,73 @@
 
 # Crunchyroll PiP
 
-Assista à Crunchyroll em uma janela flutuante enquanto usa outros programas. Um clique no botão do player abre Picture-in-Picture; outro fecha.
+Uma extensão simples para assistir à Crunchyroll em uma janela flutuante. Ela coloca um botão de PiP nos controles do vídeo, então dá para abrir a janela sem ir até o ícone da extensão.
 
-**Local, sem anúncios, sem conta extra e sem coleta de dados.** Projeto independente e não oficial, sem vínculo com a Crunchyroll.
+Funciona no Chrome para computador. Não coleta dados e não tem vínculo com a Crunchyroll.
 
-## Instalar no Chrome
+## Como instalar
 
-Não precisa instalar Node.js nem programar.
+1. [Baixe a extensão](dist/crunchyroll-pip-1.1.2.zip?raw=true) e extraia o ZIP.
+2. Guarde a pasta em um lugar onde ela possa ficar, como Documentos.
+3. Abra `chrome://extensions` no Chrome.
+4. Ative o **Modo do desenvolvedor**.
+5. Clique em **Carregar sem compactação** e escolha a pasta que contém o arquivo `manifest.json`.
+6. Atualize a página da Crunchyroll, dê play em um episódio e clique no novo botão do player.
 
-1. **[Baixe o ZIP pronto](dist/crunchyroll-pip-1.1.2.zip?raw=true)**.
-2. Extraia para uma pasta permanente, como `Documentos/crunchyroll-pip`.
-3. Abra `chrome://extensions` na barra de endereço do Chrome.
-4. Ative **Modo do desenvolvedor** no canto superior direito.
-5. Clique em **Carregar sem compactação** e selecione a pasta extraída que contém `manifest.json`.
-6. Abra ou atualize o episódio na Crunchyroll, dê play e clique no botão **Abrir janela flutuante (PiP)** nos controles.
+Se preferir, você também pode fixar a extensão no menu de quebra-cabeça do Chrome e usar o ícone dela.
 
-Você também pode fixar a extensão no menu de quebra-cabeça e usar o ícone. Mantenha a pasta extraída no computador: o Chrome continua usando seus arquivos.
+Não apague a pasta depois de instalar: o Chrome precisa desses arquivos. Não é necessário instalar Node.js nem usar o botão “Compactar extensão”.
 
-Alternativa: **Code → Download ZIP**, extraia e selecione a raiz do projeto, onde está `manifest.json`. O código de instalação já vem gerado.
+## Como usar
 
-> Extraia o ZIP antes de instalar. Não use “Compactar extensão” nem arraste o ZIP para o Chrome. Esta é uma instalação manual pelo GitHub. Computadores gerenciados por empresas/escolas podem impedir extensões locais.
+Clique no botão para abrir ou fechar a janela flutuante. Você pode mover e redimensionar a janela, mas precisa manter a aba do episódio aberta.
 
-## Usar e atualizar
+O botão fica junto aos controles do player. Caso a extensão não encontre esses controles, ele aparece no canto superior direito do vídeo.
 
-- O botão aparece junto aos controles. Se não forem reconhecidos, aparece no canto superior direito como alternativa.
-- Arraste e redimensione a janela pelos controles do navegador.
-- Clique novamente ou feche a janela para voltar ao player. Mantenha a aba do episódio aberta.
-- Se o ícone mostrar `!`, passe o mouse para ler a orientação.
-- Para atualizar, baixe o novo pacote e substitua os arquivos na mesma pasta. Em `chrome://extensions`, clique em **Recarregar** e atualize a página do episódio. **Não há atualização automática pelo GitHub.**
-- Para desinstalar, clique em **Remover** em `chrome://extensions`; depois pode apagar a pasta.
+## Atualização
 
-## Privacidade e permissões
+Baixe a versão nova, extraia os arquivos na mesma pasta e clique em **Recarregar** em `chrome://extensions`. Depois, atualize a página do episódio.
 
-Sem analytics, servidores, leitura de cookies, armazenamento de dados ou requisições de rede pela extensão. A reprodução permanece no player da Crunchyroll.
+A instalação pelo GitHub não tem atualização automática. Para desinstalar, basta clicar em **Remover** na página de extensões.
 
-| Permissão | Motivo |
-| --- | --- |
-| `scripting` | Abrir/fechar PiP pelo ícone da extensão. |
-| `https://*.crunchyroll.com/*` | Encontrar o vídeo e inserir o botão, inclusive no iframe do player. |
+## Privacidade
 
-O Chrome pode avisar que a extensão pode ler/alterar dados da Crunchyroll. Esse é o alcance técnico concedido; o código o utiliza para localizar vídeos e controles e operar PiP. O script executa automaticamente nesse domínio para inserir o botão, mas só abre PiP após um clique. Leia [PRIVACY.md](PRIVACY.md).
+Tudo roda no seu navegador. A extensão não salva dados, não lê cookies e não faz requisições de rede. Também não tem anúncios ou analytics.
 
-## Limitações
+Ela pede acesso às páginas da Crunchyroll para encontrar o vídeo e adicionar o botão. A permissão `scripting` permite abrir o PiP pelo ícone da extensão. Por isso o Chrome mostra um aviso de acesso ao site durante a instalação.
 
-- Voltado ao Chrome desktop, não ao Chrome de celular.
-- Legendas e controles sobrepostos podem não aparecer no PiP nativo.
-- Não contorna DRM, assinatura, anúncios ou políticas do player.
-- Mudanças no site podem exigir adaptações. Iframes fora de `crunchyroll.com` não são acessados.
-- Se não funcionar, recarregue a extensão e a página, dê play e tente novamente.
+Mais detalhes em [PRIVACY.md](PRIVACY.md).
 
-Abra uma **Issue** com navegador, versão da extensão e passos para reproduzir problemas. Não publique cookies, credenciais ou dados da conta.
+## Problemas conhecidos
 
-## Desenvolvimento
+- Legendas e controles que ficam por cima do vídeo podem não aparecer na janela flutuante.
+- Mudanças no player da Crunchyroll podem afetar o botão.
+- A extensão não acessa players hospedados fora de `crunchyroll.com` e seus subdomínios.
+- Ela não contorna DRM nem libera conteúdo que exige assinatura.
 
-JavaScript puro, Manifest V3 e nenhuma dependência de produção. Com Node.js 22 ou superior:
+Se algo não funcionar, tente recarregar a extensão e a página do episódio. Se continuar, abra uma Issue contando o que aconteceu e qual navegador está usando. Não envie dados da sua conta.
+
+## Para mexer no código
+
+O projeto usa JavaScript e Manifest V3, sem dependências externas. Com Node.js 22 ou superior:
 
 ```sh
 npm run build
 npm test
 ```
 
-`pip.js` contém a lógica; `background.js` atende ao ícone; `player-button.js` adiciona o botão. `build.js` gera o `content.js` distribuído. Gere novamente após alterar os fontes.
+A lógica do PiP fica em `pip.js`, o botão do player em `player-button.js` e a ação do ícone em `background.js`. O build junta os arquivos necessários em `content.js`, que já vem incluído para quem só quer instalar.
 
-Os testes cobrem seleção de frame, abertura/fechamento e restauração do atributo de bloqueio. `tests/*-check.js` são verificações manuais via Playwright CLI em player sintético. O funcionamento também foi confirmado pelo usuário na Crunchyroll, sem garantir todas as versões futuras do site.
+Os testes verificam abertura, fechamento e escolha do vídeo. Os arquivos `tests/*-check.js` servem para testar no navegador com Playwright CLI e um vídeo de exemplo.
 
-Para gerar o pacote no Windows:
+Para gerar o ZIP no Windows:
 
 ```powershell
 powershell -NoProfile -File scripts/package.ps1
 ```
 
-A lista explícita do pacote exclui testes, histórico Git, logs e arquivos pessoais. O hash SHA-256 fica em `dist/SHA256SUMS.txt`.
+O pacote fica em `dist`, junto do arquivo com seu hash SHA-256.
 
-## Licença e marca
+## Licença
 
-Código sob [licença MIT](LICENSE). Crunchyroll e suas marcas pertencem aos respectivos titulares; a licença do código não concede direitos sobre marcas de terceiros. O ícone é inspirado no serviço e não indica afiliação oficial.
+[MIT](LICENSE). As marcas da Crunchyroll pertencem aos seus respectivos titulares. Este projeto não é oficial.

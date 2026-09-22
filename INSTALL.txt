@@ -1,18 +1,21 @@
-CRUNCHYROLL PIP - INSTALACAO
+Crunchyroll PiP
 
-1. Extraia este ZIP para uma pasta permanente no computador.
-2. No Chrome, abra chrome://extensions
-3. Ative Modo do desenvolvedor.
-4. Clique em Carregar sem compactacao.
-5. Escolha esta pasta, a mesma que contem manifest.json.
-6. Abra ou atualize o episodio na Crunchyroll e de play.
-7. Clique no botao de janela flutuante nos controles do player.
+Como instalar:
 
-Voce tambem pode fixar e usar o icone da extensao.
-Mantenha esta pasta no computador e a aba do episodio aberta.
-Para atualizar: substitua os arquivos nesta pasta, recarregue a extensao
-em chrome://extensions e atualize a pagina do episodio.
-Nao ha atualizacao automatica nesta instalacao manual.
+1. Extraia o ZIP e guarde a pasta no computador.
+2. Abra chrome://extensions no Chrome.
+3. Ative o Modo do desenvolvedor.
+4. Clique em Carregar sem compactacao e escolha esta pasta
+   (a que contem o arquivo manifest.json).
+5. Atualize a pagina da Crunchyroll, de play e clique no botao PiP.
 
-Sem coleta ou envio de dados. Leia PRIVACY.md.
-Projeto independente e nao oficial, sem vinculo com a Crunchyroll.
+Tambem da para usar o icone da extensao na barra do Chrome.
+Nao apague esta pasta depois de instalar. Para assistir na janela
+flutuante, mantenha a aba do episodio aberta.
+
+Para atualizar, substitua os arquivos nesta pasta e clique em
+Recarregar na pagina de extensoes. Depois atualize o episodio.
+A instalacao pelo GitHub nao recebe atualizacoes automaticas.
+
+A extensao nao coleta dados. Veja PRIVACY.md para mais detalhes.
+Este projeto nao tem vinculo com a Crunchyroll.
