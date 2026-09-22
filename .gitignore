@@ -1,0 +1,9 @@
+.playwright-cli/
+node_modules/
+*.pem
+*.key
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

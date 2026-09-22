@@ -1,0 +1,123 @@
+// Runs locally in Crunchyroll frames; never reads account or playback URLs.
+(() => {
+  const id = 'crunchyroll-pip-control';
+  let video;
+  let button;
+  let pending = false;
+  let scheduled = false;
+  const icon = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="11" width="8" height="7" rx="1" fill="currentColor"/></svg>';
+
+  function update() {
+    if (!button) return;
+    const active = document.pictureInPictureElement === video;
+    const label = active ? 'Fechar janela flutuante' : 'Abrir janela flutuante (PiP)';
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    button.setAttribute('aria-pressed', String(active));
+  }
+
+  function mount() {
+    scheduled = false;
+    const nextVideo = [...document.querySelectorAll('video')]
+      .sort((a, b) => b.clientWidth * b.clientHeight - a.clientWidth * a.clientHeight)[0];
+    if (!nextVideo) {
+      button?.remove();
+      button = null;
+      video = null;
+      return;
+    }
+    if (nextVideo !== video) {
+      video?.removeEventListener('enterpictureinpicture', update);
+      video?.removeEventListener('leavepictureinpicture', update);
+      video = nextVideo;
+      video.addEventListener('enterpictureinpicture', update);
+      video.addEventListener('leavepictureinpicture', update);
+    }
+    if (button?.isConnected && !button.dataset.fallback) return;
+
+    // Search only ancestors of the video so page navigation buttons aren't used.
+    let root = video.parentElement;
+    let anchor;
+    while (root && root !== document.body) {
+      const controls = [...root.querySelectorAll('button, [role="button"]')]
+        .filter(el => el.id !== id);
+      anchor = controls.find(el => /next.?episode|pr[oó]ximo epis[oó]dio|epis[oó]dio seguinte/i.test(
+        [el.getAttribute('aria-label'), el.title, el.getAttribute('data-testid')].join(' ')))
+        || controls.find(el => /settings|configura[çc][oõ]es|fullscreen|tela cheia/i.test(
+          [el.getAttribute('aria-label'), el.title, el.getAttribute('data-testid')].join(' ')));
+      if (anchor) break;
+      root = root.parentElement;
+    }
+    if (!button) {
+      button = document.createElement('button');
+      button.id = id;
+      button.type = 'button';
+      button.innerHTML = icon;
+      button.addEventListener('click', async event => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (pending) return;
+        pending = true;
+        const result = await toggleVideo();
+        pending = false;
+        update();
+        if (!['opened', 'closed'].includes(result)) {
+          button.title = 'Dê play no episódio e tente novamente.';
+          button.setAttribute('aria-label', button.title);
+        }
+      });
+    }
+    if (anchor) {
+      delete button.dataset.fallback;
+      // Controls often wrap each button in a tooltip container. Inserting inside
+      // that wrapper stacks PiP above the original button. Find the actual row.
+      let slot = anchor;
+      let parent = anchor.parentElement;
+      while (parent && parent !== root) {
+        const layout = getComputedStyle(parent);
+        if (['flex', 'inline-flex'].includes(layout.display)
+          && layout.flexDirection.startsWith('row')
+          && parent.querySelectorAll('button, [role="button"]').length > 1) break;
+        slot = parent;
+        parent = parent.parentElement;
+      }
+      if (parent && ['flex', 'inline-flex'].includes(getComputedStyle(parent).display)
+        && getComputedStyle(parent).flexDirection.startsWith('row')) {
+        slot.before(button);
+      } else {
+        anchor.before(button);
+      }
+    } else if (!button.isConnected) {
+      // Safe fallback if the site's private control markup changes.
+      button.dataset.fallback = 'true';
+      (document.fullscreenElement || video.parentElement).append(button);
+    }
+    update();
+  }
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #${id} { all:initial; display:inline-flex!important; position:static!important;
+      align-self:center!important; float:none!important; transform:none!important;
+      align-items:center; justify-content:center;
+      width:44px; height:44px; min-width:44px; padding:10px; margin:0 2px; border:0;
+      background:transparent; color:#fff; border-radius:4px; cursor:pointer;
+      vertical-align:middle; flex-shrink:0; box-sizing:border-box; }
+    #${id}:hover, #${id}[aria-pressed="true"] { color:#ff640a; }
+    #${id}:focus-visible { outline:2px solid #ff640a; outline-offset:2px; }
+    #${id} svg { display:block!important; width:24px!important; height:24px!important; pointer-events:none; }
+    #${id}[data-fallback] { position:absolute!important; top:16px; right:16px;
+      z-index:2147483647; background:rgba(0,0,0,.7); }
+  `;
+  document.documentElement.append(style);
+  const observer = new MutationObserver(() => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(mount);
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('fullscreenchange', () => {
+    if (button?.dataset.fallback) { button.remove(); mount(); }
+  });
+  mount();
+})();
