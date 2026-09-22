@@ -59,7 +59,16 @@ npm test
 
 A lógica do PiP fica em `pip.js`, o botão do player em `player-button.js` e a ação do ícone em `background.js`. O build junta os arquivos necessários em `content.js`, que já vem incluído para quem só quer instalar.
 
-Os testes verificam abertura, fechamento e escolha do vídeo. Os arquivos `tests/*-check.js` servem para testar no navegador com Playwright CLI e um vídeo de exemplo.
+Os testes verificam abertura, fechamento e escolha do vídeo. O teste de navegador usa um vídeo de exemplo para conferir também o botão e seu alinhamento. Com Playwright CLI instalado, execute:
+
+```sh
+node scripts/prepare-browser-test.js
+playwright-cli -s=crunchyroll-pip open about:blank
+playwright-cli -s=crunchyroll-pip run-code --filename=.playwright-cli/player-check.js
+playwright-cli -s=crunchyroll-pip close
+```
+
+Esse comando prepara o teste com o código atual da extensão. Os arquivos temporários ficam em `.playwright-cli/` e não vão para o GitHub.
 
 Para gerar o ZIP no Windows:
 
