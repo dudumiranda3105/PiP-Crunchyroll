@@ -1,0 +1,67 @@
+// Runs in the player's main world so existing media handlers can be restored.
+(() => {
+  if (!navigator.mediaSession) return;
+  const session = navigator.mediaSession;
+  const original = session.setActionHandler;
+  const saved = new Map();
+  let active = null;
+  let observer = null;
+  let timer = null;
+  let nextAvailable = null;
+  let lastNext = -Infinity;
+  const controlled = new Set(['previoustrack', 'nexttrack']);
+  const set = (action, handler) => original.call(session, action, handler);
+  const previous = () => {
+    if (active && document.pictureInPictureElement === active) skipOpening(active);
+  };
+  const next = () => {
+    if (!active || document.pictureInPictureElement !== active || performance.now() - lastNext < 1500) return;
+    const button = findPlayerAction(active, 'next');
+    if (button) { lastNext = performance.now(); button.click(); }
+    refresh();
+  };
+  function refresh() {
+    if (!active) return;
+    const available = Boolean(findPlayerAction(active, 'next'));
+    if (available !== nextAvailable) {
+      nextAvailable = available;
+      set('nexttrack', available ? next : null);
+    }
+  }
+  // Remember the player's registrations, including changes made while PiP is open.
+  session.setActionHandler = function(action, handler) {
+    if (this !== session || !controlled.has(action)) return original.call(this, action, handler);
+    if (!active) {
+      const result = original.call(this, action, handler);
+      saved.set(action, handler);
+      return result;
+    }
+    if (handler !== null && typeof handler !== 'function') return original.call(this, action, handler);
+    saved.set(action, handler);
+  };
+  function stop() {
+    if (!active) return;
+    active = null;
+    observer?.disconnect();
+    clearTimeout(timer);
+    nextAvailable = null;
+    for (const action of controlled) set(action, saved.get(action) || null);
+  }
+  document.addEventListener('enterpictureinpicture', event => {
+    stop();
+    active = event.target;
+    lastNext = -Infinity;
+    set('previoustrack', previous);
+    refresh();
+    observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(refresh, 100);
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true,
+      attributes: true, attributeFilter: ['disabled', 'aria-disabled', 'hidden', 'aria-label'] });
+  }, true);
+  document.addEventListener('leavepictureinpicture', event => {
+    if (event.target === active) stop();
+  }, true);
+  window.addEventListener('pagehide', stop);
+})();

@@ -1,1 +1,1 @@
-7c45400dd2deb3b9162dd1ae138a7df4bda28c67e4d2f37e2da7c5ddacec6d8d  crunchyroll-pip-1.1.2.zip
+62f835b6ef0b4b63742ee50dbbfd089f60fabd3ce4c03836673dd457fcd3c6a6  crunchyroll-pip-1.2.0.zip

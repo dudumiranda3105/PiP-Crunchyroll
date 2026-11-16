@@ -4,7 +4,7 @@ Push-Location $projectRoot
 try {
     node build.js
     if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
-    node --test tests/pip.test.js
+    node --test tests/pip.test.js tests/media-actions.test.js
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
     $manifest = Get-Content manifest.json -Raw | ConvertFrom-Json
     $packageName = "crunchyroll-pip-$($manifest.version).zip"
@@ -15,7 +15,7 @@ try {
     $stream = [System.IO.File]::Open($archivePath, [System.IO.FileMode]::Create)
     $archive = New-Object System.IO.Compression.ZipArchive($stream, [System.IO.Compression.ZipArchiveMode]::Create)
     try {
-        $files = @('manifest.json', 'background.js', 'pip.js', 'content.js', 'PRIVACY.md', 'LICENSE', 'INSTALL.txt',
+        $files = @('manifest.json', 'background.js', 'pip.js', 'content.js', 'media-controls.js', 'PRIVACY.md', 'LICENSE', 'INSTALL.txt',
             'icons/icon-16.png', 'icons/icon-32.png', 'icons/icon-48.png', 'icons/icon-128.png')
         foreach ($file in $files) {
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, (Join-Path $projectRoot $file), $file) | Out-Null

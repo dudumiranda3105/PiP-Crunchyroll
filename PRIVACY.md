@@ -11,3 +11,5 @@ O acesso se limita a páginas HTTPS de `crunchyroll.com` e seus subdomínios. O 
 O Chrome guarda a instalação e o estado visual da extensão. As políticas do Chrome, da Crunchyroll e do GitHub continuam valendo para o uso desses serviços, separadamente desta extensão.
 
 Se tiver alguma dúvida, abra uma Issue no repositório. Lembre que as Issues são públicas e não envie informações da sua conta.
+
+Enquanto o PiP esta aberto, a extensao usa os comandos de midia anterior/proximo para pular a abertura ou passar o episodio. Ela procura os botoes do player e, quando necessario, avanca 90 segundos no video. Os comandos originais sao restaurados ao sair do PiP. Nenhum dado adicional e salvo ou enviado.

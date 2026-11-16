@@ -19,3 +19,9 @@ A instalacao pelo GitHub nao recebe atualizacoes automaticas.
 
 A extensao nao coleta dados. Veja PRIVACY.md para mais detalhes.
 Este projeto nao tem vinculo com a Crunchyroll.
+
+Controles no PiP (versao 1.2.0):
+- Anterior (<<): pula a abertura pelo botao do site ou avanca 90 segundos.
+- Proximo (>>): aciona o proximo episodio, quando disponivel no player.
+Passe o mouse na janela para ver os controles. Ao trocar de episodio,
+pode ser necessario abrir o PiP novamente.

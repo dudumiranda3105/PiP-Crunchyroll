@@ -1,6 +1,15 @@
 async page => {
   await page.route('https://www.crunchyroll.com/pip-local-test', route => route.fulfill({contentType:'text/html', body:'<main style="position:relative"><canvas width="320" height="180"></canvas><video muted autoplay></video><nav style="display:flex;align-items:center"><div><button aria-label="Next episode">Next</button></div><div><button aria-label="Settings">Settings</button></div></nav></main>'}));
   await page.goto('https://www.crunchyroll.com/pip-local-test');
+  await page.evaluate(() => {
+    window.testHandlers = new Map();
+    const original = navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);
+    navigator.mediaSession.setActionHandler = (action, handler) => {
+      window.testHandlers.set(action, handler);
+      original(action, handler);
+    };
+  });
+  await page.addScriptTag({content: __MEDIA_SOURCE__});
   await page.addScriptTag({content: __EXTENSION_SOURCE__});
   await page.evaluate(async () => {
     const canvas = document.querySelector('canvas');
@@ -10,6 +19,13 @@ async page => {
     video.disablePictureInPicture = true;
     video.srcObject = canvas.captureStream(25);
     await video.play();
+    const intro = document.createElement('button');
+    intro.textContent = 'Skip Intro';
+    intro.onclick = () => document.body.dataset.skipped = 'yes';
+    document.querySelector('nav').append(intro);
+    document.querySelector('[aria-label="Next episode"]').onclick = () => document.body.dataset.next = 'yes';
+    window.originalNext = () => {};
+    navigator.mediaSession.setActionHandler('nexttrack', window.originalNext);
   });
   await page.locator('#crunchyroll-pip-control').click();
   await page.waitForFunction(() => !!document.pictureInPictureElement);
@@ -19,8 +35,16 @@ async page => {
   if (!aligned) throw new Error('Control row alignment failed');
   const opened = await page.evaluate(() => !!document.pictureInPictureElement);
   if (!opened) throw new Error('PiP closed prematurely');
+  await page.evaluate(() => {
+    window.testHandlers.get('previoustrack')();
+    window.testHandlers.get('nexttrack')();
+    if (document.body.dataset.skipped !== 'yes' || document.body.dataset.next !== 'yes') {
+      throw new Error('PiP media actions failed');
+    }
+  });
   await page.locator('#crunchyroll-pip-control').click();
   await page.waitForFunction(() => !document.pictureInPictureElement);
   if (!await page.evaluate(() => document.querySelector('video').disablePictureInPicture)) throw new Error('Attribute not restored');
+  if (!await page.evaluate(() => window.testHandlers.get('nexttrack') === window.originalNext)) throw new Error('Media handler not restored');
   console.log(JSON.stringify({opened, closed: await page.evaluate(() => !document.pictureInPictureElement)}));
 }

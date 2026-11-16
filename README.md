@@ -6,7 +6,7 @@ A simple Chrome extension for watching Crunchyroll in a floating window. It adds
 
 Built for desktop Chrome. No data collection. Not affiliated with Crunchyroll.
 
-**[Download v1.1.2](https://github.com/dudumiranda3105/PiP-Crunchyroll/releases/download/v1.1.2/crunchyroll-pip-1.1.2.zip)** · [All releases](https://github.com/dudumiranda3105/PiP-Crunchyroll/releases)
+**[Download v1.2.0](https://github.com/dudumiranda3105/PiP-Crunchyroll/releases/download/v1.2.0/crunchyroll-pip-1.2.0.zip)** · [All releases](https://github.com/dudumiranda3105/PiP-Crunchyroll/releases)
 
 ## Installation
 
@@ -19,7 +19,7 @@ Built for desktop Chrome. No data collection. Not affiliated with Crunchyroll.
 
 You can also pin the extension from Chrome's puzzle-piece menu and use its toolbar icon.
 
-Keep the extracted folder after installation: Chrome needs those files. You don't need Node.js or the **Pack extension** button. On the Releases page, download `crunchyroll-pip-1.1.2.zip`; the automatically generated Source code archives are not needed for installation.
+Keep the extracted folder after installation: Chrome needs those files. You don't need Node.js or the **Pack extension** button. On the Releases page, download `crunchyroll-pip-1.2.0.zip`; the automatically generated Source code archives are not needed for installation.
 
 ## Usage
 
@@ -28,6 +28,17 @@ Click the button to open or close the floating window. You can move and resize i
 The button sits alongside the player controls. If the extension cannot find those controls, it appears in the top-right corner of the video instead.
 
 The extension's tooltips are currently in Portuguese. Look for the small window icon to toggle PiP.
+
+### Controls inside the floating window
+
+- **Previous track («): skip opening.** Uses Crunchyroll's available Skip Intro control first. Otherwise, advances 90 seconds from the current position, within the video's seekable range. Click at the start of the opening: this fallback does not detect where an opening begins or ends.
+- **Next track (»): next episode.** Activates the player's available next-episode button. If no supported button is found, this action is unavailable.
+
+Chrome chooses the icons and labels, so the opening shortcut still looks like “previous track”. Show the PiP controls by hovering over the window. These actions may also respond to your keyboard's previous/next media keys while PiP is open. The player's original media actions are restored when you close it.
+
+Changing episodes may close PiP if Crunchyroll replaces the video or navigates to another page; open it again in that case. Button availability depends on your browser and the site's player.
+
+Around 90 seconds is a common opening length, not a measured average across all anime. See [AnimeNation](https://www.animenation.net/blog/ask-john-why-are-anime-opening-sequences-so-long/) and [Crunchyroll's Skip Intro documentation](https://help.crunchyroll.com/hc/en-us/articles/20369940738708-What-is-the-Skip-Intro-feature).
 
 ## Updates
 
@@ -61,7 +72,7 @@ npm run build
 npm test
 ```
 
-PiP logic lives in `pip.js`, the player button in `player-button.js`, and the toolbar action in `background.js`. The build combines the required code into `content.js`, which is already included for users who only want to install the extension.
+Media controls live in `media-actions.js` and `media-session.js`, compiled into `media-controls.js`. PiP logic lives in `pip.js`, the player button in `player-button.js`, and the toolbar action in `background.js`. The build combines the required code into `content.js`, which is already included for users who only want to install the extension.
 
 The unit tests cover opening, closing, and selecting a video. The browser test uses a sample video to check the button and its alignment. With Playwright CLI installed:
 
